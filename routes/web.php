@@ -1,10 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+Route::redirect('/','/admin');
 
-Route::get('/', function () {
-    return view('welcome');
-});
+//Route::get('/', function () {
+//    return view('welcome');
+//});
 
 Route::middleware([
     'auth:sanctum',
