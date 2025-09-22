@@ -59,3 +59,48 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+# Proyecto Laravel – Layout Administrativo
+
+Este proyecto consiste en crear un **layout administrativo** funcional en Laravel, integrando Flowbite para la interfaz y utilizando buenas prácticas de Blade como la separación de código y slots para contenido dinámico.
+
+---
+
+## Creación del componente AdminLayout
+
+- Crear un componente Blade llamado `AdminLayout`.
+- Ubicarlo en:  
+resources/views/layouts/AdminLayout.blade.php
+- Este layout servirá como plantilla principal para todas las vistas administrativas e incluirá los contenedores básicos: sidebar, navbar y área de contenido principal.
+
+---
+
+## Integración y funcionamiento de Flowbite
+
+- Instalar e integrar **Flowbite** en el proyecto.
+- Verificar que:
+- **Sidebar** y **navbar** sean visibles y operativos.
+- Los botones funcionen correctamente para navegar, incluyendo la página de información de usuario.
+- Asegurarse de que los componentes interactivos de Flowbite (desplegables, botones, etc.) funcionen correctamente.
+
+---
+
+## Separación de código con @include
+
+- Dividir la estructura del layout en archivos parciales (partials) para mantener el código limpio:
+- `resources/views/includes/sidebar.blade.php`
+- `resources/views/includes/navbar.blade.php`
+- Incluir estos archivos en `AdminLayout.blade.php` usando:
+```blade
+@include('includes.sidebar')
+@include('includes.navbar')
+Implementación de contenido dinámico con {{$slot}}
+
+Usar {{$slot}} dentro de AdminLayout para que las vistas hijas puedan insertar contenido dinámico:
+
+<div class="content">
+    {{$slot}}
+</div>
+
+
+Por ejemplo, dashboard.blade.php debe extender AdminLayout y colocar su contenido dentro del slot.

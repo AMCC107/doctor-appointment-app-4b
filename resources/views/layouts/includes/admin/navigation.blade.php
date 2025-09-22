@@ -15,19 +15,13 @@
             </div>
             <div class="flex items-center">
 
-                <div class="flex items-center ms-3">
-                    <div>
-                    <button type="button" class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" aria-expanded="false" data-dropdown-toggle="dropdown-user">
-                        <span class="sr-only">Open user menu</span>
-                        <img class="w-8 h-8 rounded-full" src="https://flowbite.com/docs/images/people/profile-picture-5.jpg" alt="user photo">
-                    </button>
  <!-- Settings Dropdown -->
                 <div class="ms-3 relative">
                     <x-dropdown align="right" width="48">
                         <x-slot name="trigger">
                             @if (Laravel\Jetstream\Jetstream::managesProfilePhotos())
                                 <button class="flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-gray-300 transition">
-                                    <img class="size-8 rounded-full object-cover" src="{{ Auth::user()->profile_photo_url }}" alt="{{ Auth::user()->name }}" />
+                                <img class="w-8 h-8 rounded-full object-cover" src="{{ Auth::user()->profile_photo_url }}" alt="{{ Auth::user()->name }}" />
                                 </button>
                             @else
                                 <span class="inline-flex rounded-md">
