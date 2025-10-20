@@ -7,31 +7,14 @@ $links = [
         'active' => request()->routeIs('admin.dashboard'),
     ],
     [
-        'header' => 'Hospital',
+        'header' => 'Gestión',
     ],
     [
-        'name' => 'Dashboard',
-        'icon' => 'fa-solid fa-gauge',
+        'name' => 'Roles y permisos',
+        'icon' => 'fa-solid fa-shield-halved',
         'href' => route('admin.dashboard'),
-        'active' => false,
-        'submenu'=> [
-            [
-                'name' => 'Ian master',
-                'href' => '#',
-                'active'=> false,
-            ],
-            [
-                'name' => 'Billing',
-                'href' => '#',
-                'active'=> false,
-            ],
-            [
-                'name' => 'Invoice',
-                'href' => '#',
-                'active'=> false,
-            ],
-        ],
-    ],
+        'active' => request()->routeIs('admin.roles.*'), 
+],
 ];
 @endphp
 
