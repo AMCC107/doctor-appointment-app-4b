@@ -1,17 +1,18 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Controller as BaseController;
 use Illuminate\Http\Request;
 
-class RoleController extends Controller
+class RoleController extends BaseController
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
+        // Aquí es donde se carga la vista de roles
         return view('admin.roles.index');
     }
 

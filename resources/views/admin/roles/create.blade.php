@@ -1,0 +1,12 @@
+<x-admin-layout title="Roles | SpamSafe":breadcrumbs="[
+    [
+        'name'=> 'Dashboard',
+        'route'=> route ('admin.dashboard'),
+],
+[
+    'name'=> 'Roles',
+    'route'=>route('admin.roles.index'),
+],
+    ['name'=>'Nuevo'],
+]">
+</x-admin-layout>

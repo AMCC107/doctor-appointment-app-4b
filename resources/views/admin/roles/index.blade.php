@@ -1,12 +1,11 @@
-<x-admin-layout
-    title="Roles | Spamlife" 
-    :breadcrumb="[
-       [ 'name'=>'Dashboard',
+<x-admin-layout title="Roles | SpamSafe" :breadcrumbs="[
+    [
+        'name'=> 'Dashboard',
         'route'=> route('admin.dashboard'),
-        ],
-        [
-            'name'=>'Roles',
-        ],
-    ]">
-
+    ],
+    [
+        'name'=> 'Roles',
+    ],
+]">
+   @livewire('admin.datatables.role-table')
 </x-admin-layout>
