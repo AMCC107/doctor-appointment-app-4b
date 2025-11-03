@@ -4,7 +4,7 @@ import forms from "@tailwindcss/forms";
 
 import typography from "@tailwindcss/typography";
 
-import flowbite from "flowbite/plugin";
+// import flowbite from "flowbite/plugin.js";
 
 import wireui from "./vendor/wireui/wireui/tailwind.config.js";
 
@@ -42,7 +42,7 @@ content: [
 
 
 
-"./node_modules/flowbite/**/*.js",
+// "./node_modules/flowbite/**/*.js",
 
 ],
 
@@ -60,6 +60,6 @@ sans: ["Figtree", ...defaultTheme.fontFamily.sans],
 
 },
 
-plugins: [forms, typography, flowbite],
+plugins: [forms, typography],
 
 }; 

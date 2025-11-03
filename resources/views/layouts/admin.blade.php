@@ -9,7 +9,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-
         <title>{{ $title ?? 'Dashboard' }}</title>
 
         <!-- Fonts -->
@@ -29,6 +28,12 @@
         <div class="p-4 sm:ml-64">
             <div class="mt-14 flex items-center justify-between w-full">
                 @include('layouts.includes.admin.breadcrumb', ['breadcrumbs' => $breadcrumbs])
+
+                @isset($actions)
+                    <div>
+                        {{ $actions }}
+                    </div>
+                @endisset
             </div>
 
             {{ $slot }}
