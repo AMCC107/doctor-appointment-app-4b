@@ -21,7 +21,7 @@ class RoleController extends BaseController
      */
     public function create()
     {
-        //
+        return view('admin.roles.create');
     }
 
     /**
@@ -45,7 +45,7 @@ class RoleController extends BaseController
      */
     public function edit(string $id)
     {
-        //
+        return view('admin.roles.edit');
     }
 
     /**
