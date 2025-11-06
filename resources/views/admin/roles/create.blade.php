@@ -22,6 +22,20 @@
         </x-wire-button>
     </x-slot>
 
-    {{-- Aquí puedes agregar el formulario para crear roles --}}
+    <x-wire-card>
+        <form action= "{{route('admin.roles.store')}}"method="POST">
+            @csrf
+            <x-wire-input
+            label="Nombre"
+            name="name"
+            placeholder="Nombre del rol"
+            value="{{old('name')}}">
+
+            </x-wire-input>
+            <div class="flex justify-end margin-top-4">
+                <x-wire-button type="submit" blue>Guardar</x-wire-button>
+            </div>
+        </form>
+    </x-wire-card>
 
 </x-admin-layout>
