@@ -32,7 +32,7 @@
             value="{{old('name')}}">
 
             </x-wire-input>
-            <div class="flex justify-end margin-top-4">
+            <div class="flex justify-end mt-4">
                 <x-wire-button type="submit" blue>Guardar</x-wire-button>
             </div>
         </form>

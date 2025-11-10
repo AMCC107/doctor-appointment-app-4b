@@ -1,7 +1,3 @@
-@props([
-    'title' => config('app.name', 'Laravel'),
-    'breadcrumbs' => []
-])
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
@@ -9,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ $title ?? 'Dashboard' }}</title>
+        <title>{{ $title ?? config('app.name', 'Laravel') }}</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -20,7 +16,7 @@
         <script src="https://kit.fontawesome.com/33375f1763.js" crossorigin="anonymous"></script>
         {{-- SweetAlert2 --}}
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-       {{-- Wire UI --}}
+        {{-- Wire UI --}}
         <wireui:scripts />
         @livewireStyles
     </head>
@@ -30,7 +26,7 @@
 
         <div class="p-4 sm:ml-64">
             <div class="mt-14 flex items-center justify-between w-full">
-                @include('layouts.includes.admin.breadcrumb', ['breadcrumbs' => $breadcrumbs])
+                @include('layouts.includes.admin.breadcrumb', ['breadcrumbs' => $breadcrumbs ?? []])
 
                 @isset($actions)
                     <div>
@@ -45,11 +41,35 @@
         @stack('modals')
         @livewireScripts
         <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
-        {{--Mostrar Sweet Alert--}}
+
+        {{-- Mostrar Sweet Alert --}}
         @if(session('swal'))
             <script>
                 Swal.fire(@json(session('swal')));
             </script>
         @endif
+
+        <script>
+            const forms = document.querySelectorAll('.delete-form');
+            forms.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    Swal.fire({
+                        title: "¿Estás seguro?",
+                        text: "No podrás revertir esto",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#3085d6",
+                        cancelButtonColor: "#d33",
+                        confirmButtonText: "Sí, eliminar",
+                        cancelButtonText: "Cancelar"
+                    }).then((result) => {
+                        if(result.isConfirmed){
+                            form.submit();
+                        }
+                    });
+                });
+            });
+        </script>
     </body>
 </html>
