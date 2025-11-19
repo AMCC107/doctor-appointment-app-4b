@@ -21,20 +21,7 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:6|confirmed',
-        ]);
 
-        User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => bcrypt($validated['password']),
-        ]);
-
-        return redirect()->route('admin.users.index')
-                         ->with('swal', ['icon' => 'success', 'title' => 'Usuario creado correctamente']);
     }
 
     public function edit(User $user)
@@ -44,22 +31,11 @@ class UserController extends Controller
 
     public function update(Request $request, User $user)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $user->id,
-        ]);
 
-        $user->update($validated);
-
-        return redirect()->route('admin.users.index')
-                         ->with('swal', ['icon' => 'success', 'title' => 'Usuario actualizado']);
     }
 
     public function destroy(User $user)
     {
-        $user->delete();
 
-        return redirect()->route('admin.users.index')
-                         ->with('swal', ['icon' => 'success', 'title' => 'Usuario eliminado']);
     }
 }

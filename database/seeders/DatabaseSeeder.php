@@ -15,14 +15,10 @@ class DatabaseSeeder extends Seeder
     {
         //Llamar a RoleSeeder 
         $this->call([
-            RoleSeeder::class
+            RoleSeeder::class,
+            UserSeeder::class
         ]);
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Andres Castillo',
-            'email' => 'andres17cc95@gmail.com',
-            'password'=> bcrypt ('12345678')
-        ]);
     }
 }
