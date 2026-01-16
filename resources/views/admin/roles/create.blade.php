@@ -37,5 +37,4 @@
             </div>
         </form>
     </x-wire-card>
-
 </x-admin-layout>
