@@ -47,12 +47,36 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
-        return view('admin.users.edit', compact('user'));
+        $roles=Role::all();
+        return view('admin.users.edit', compact('user', 'roles'));
     }
 
     public function update(Request $request, User $user)
     {
+        $data=$request->validate([
+            'name' => 'required|string|min:3|max:255',
+            'email' => 'required|string|email|unique:users,email,' . $user->id,
+            'id_number' => 'required|string|min:5|max:255|regex:/^[A-za-z0-9]+$/|unique:users,id_number,' . $user->id,
+            'phone' => 'required|digits_between:7,15',
+            'address' => 'required|string|min:3|max:255',
+            'role_id' => 'required|exists:roles,id',
+           ]);
+    
+           $user=update($data);
+           //Si el usuario quiere editar su contraseña, que lo guarde
+           if ($request->has('password')) {
+            $user->password = bcrypt($request->password);
+            $user->save();
+           }
+           $user->roles()->sync($data['role_id']);
 
+           session()->flash('swal', 
+           [
+            'icon' => 'success',
+            'title' => 'Usuario actualizado correctamente',
+            'text' => 'El usuario ha sido actualizado exitosamente',
+           ]);
+           return redirect()->route('admin.users.edit', $user->id)->with('success', 'Usuario actualizado correctamente');
     }
 
     public function destroy(User $user)
