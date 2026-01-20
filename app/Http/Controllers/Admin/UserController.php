@@ -81,6 +81,24 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
+        // Autorizar la acción usando la Policy
+        // Esto lanzará automáticamente un 403 si la policy retorna false
+        $this->authorize('delete', $user);
+    // No permitir que el usuario logueado se borre a sí mismo 
+    if (Auth::user()==$user){
+        abort(403,'No puees borrar tu propio usuario');
+    }
+        //Eliminar roles asociados a un usuario
+        $user->roles()->detach();
 
+        //Eliminar el usuario
+        $user->delete();
+        session()->flash('swal', 
+        [
+            'icon' => 'success',
+            'title' => 'Usuario eliminado correctamente',
+            'text' => 'El usuario ha sido eliminado exitosamente',
+        ]);
+        return redirect()->route('admin.users.index')->with('success', 'Usuario eliminado correctamente');
     }
 }

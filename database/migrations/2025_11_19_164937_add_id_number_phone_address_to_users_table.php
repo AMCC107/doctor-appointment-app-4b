@@ -12,9 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('id_number')->unique()->nullable()->after('password');
-            $table->string('phone')->nullable()->after('id_number');
-            $table->string('address')->nullable()->after('phone');
+            // Verificar si las columnas ya existen antes de agregarlas (idempotente)
+            if (!Schema::hasColumn('users', 'id_number')) {
+                $table->string('id_number')->unique()->nullable()->after('password');
+            }
+            if (!Schema::hasColumn('users', 'phone')) {
+                $table->string('phone')->nullable()->after('id_number');
+            }
+            if (!Schema::hasColumn('users', 'address')) {
+                $table->string('address')->nullable()->after('phone');
+            }
         });
     }
 
@@ -23,8 +30,23 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['id_number', 'phone', 'address']);
-        });
+        // Verificar si las columnas existen antes de eliminarlas (idempotente)
+        $columnsToDrop = [];
+        
+        if (Schema::hasColumn('users', 'id_number')) {
+            $columnsToDrop[] = 'id_number';
+        }
+        if (Schema::hasColumn('users', 'phone')) {
+            $columnsToDrop[] = 'phone';
+        }
+        if (Schema::hasColumn('users', 'address')) {
+            $columnsToDrop[] = 'address';
+        }
+        
+        if (!empty($columnsToDrop)) {
+            Schema::table('users', function (Blueprint $table) use ($columnsToDrop) {
+                $table->dropColumn($columnsToDrop);
+            });
+        }
     }
 };
