@@ -34,8 +34,16 @@ class UserController extends Controller
         'role_id' => 'required|exists:roles,id',
        ]);
 
-       $user=User::create($data);
-       $user->roles()->attach($request->role_id);
+       // Exclude non-table fields and hash password
+       $user = User::create([
+           'name' => $data['name'],
+           'email' => $data['email'],
+           'password' => bcrypt($data['password']),
+           'id_number' => $data['id_number'],
+           'phone' => $data['phone'],
+           'address' => $data['address'],
+       ]);
+       $user->roles()->attach($data['role_id']);
        session()->flash('swal', 
        [
         'icon' => 'success',
@@ -62,7 +70,14 @@ class UserController extends Controller
             'role_id' => 'required|exists:roles,id',
            ]);
     
-           $user=update($data);
+           // Exclude role_id from user update
+           $user->update([
+               'name' => $data['name'],
+               'email' => $data['email'],
+               'id_number' => $data['id_number'],
+               'phone' => $data['phone'],
+               'address' => $data['address'],
+           ]);
            //Si el usuario quiere editar su contraseña, que lo guarde
            if ($request->has('password')) {
             $user->password = bcrypt($request->password);
