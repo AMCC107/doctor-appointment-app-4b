@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Role;
 
 class UserSeeder extends Seeder
 {
@@ -13,6 +14,9 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+        // Asegurar que el rol 'Doctor' existe antes de asignarlo
+        $doctorRole = Role::firstOrCreate(['name' => 'Doctor']);
+        
         $user = User::updateOrCreate(
             ['email' => 'andres17cc95@gmail.com'],
             [
@@ -25,6 +29,6 @@ class UserSeeder extends Seeder
         );
         
         // Asignar el rol (sincronizar para asegurar que solo tenga este rol)
-        $user->syncRoles(['Doctor']);
+        $user->syncRoles([$doctorRole->name]);
     }
 }

@@ -8,8 +8,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
-use Spatie\Permission\Traits\HasRoles; // <-- corregido
-
+use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, HasProfilePhoto, Notifiable, TwoFactorAuthenticatable, HasRoles;
@@ -26,8 +25,6 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
-        'two_factor_recovery_codes',
-        'two_factor_secret',
     ];
 
     protected $appends = [
@@ -40,5 +37,9 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+    //Relación uno a uno
+    public function patient() {
+        return $this->hasOne(Patient::class);
     }
 }

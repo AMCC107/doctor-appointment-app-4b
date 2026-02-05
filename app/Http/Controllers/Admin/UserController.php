@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -44,6 +45,20 @@ class UserController extends Controller
            'address' => $data['address'],
        ]);
        $user->roles()->attach($data['role_id']);
+
+       // Si se crea un paciente, redirigir al formulario de edición del paciente
+       $role = Role::find($data['role_id']);
+       if ($role && $role->name === 'Paciente') {
+           $patient = $user->patient()->create([]);
+           session()->flash('swal', 
+           [
+            'icon' => 'success',
+            'title' => 'Usuario creado correctamente',
+            'text' => 'El usuario ha sido creado exitosamente',
+           ]);
+           return redirect()->route('admin.patients.edit', $patient)->with('success', 'Usuario creado correctamente');
+       }
+
        session()->flash('swal', 
        [
         'icon' => 'success',
@@ -61,14 +76,22 @@ class UserController extends Controller
 
     public function update(Request $request, User $user)
     {
-        $data=$request->validate([
+        $validationRules = [
             'name' => 'required|string|min:3|max:255',
             'email' => 'required|string|email|unique:users,email,' . $user->id,
             'id_number' => 'required|string|min:5|max:255|regex:/^[A-za-z0-9]+$/|unique:users,id_number,' . $user->id,
             'phone' => 'required|digits_between:7,15',
             'address' => 'required|string|min:3|max:255',
             'role_id' => 'required|exists:roles,id',
-           ]);
+        ];
+
+        // Validar contraseña solo si está presente
+        if ($request->filled('password')) {
+            $validationRules['password'] = 'required|string|min:8|confirmed';
+            $validationRules['password_confirmation'] = 'required|string|min:8|same:password';
+        }
+
+        $data = $request->validate($validationRules);
     
            // Exclude role_id from user update
            $user->update([
@@ -79,8 +102,8 @@ class UserController extends Controller
                'address' => $data['address'],
            ]);
            //Si el usuario quiere editar su contraseña, que lo guarde
-           if ($request->has('password')) {
-            $user->password = bcrypt($request->password);
+           if ($request->filled('password')) {
+            $user->password = bcrypt($data['password']);
             $user->save();
            }
            $user->roles()->sync($data['role_id']);
@@ -100,8 +123,8 @@ class UserController extends Controller
         // Esto lanzará automáticamente un 403 si la policy retorna false
         $this->authorize('delete', $user);
     // No permitir que el usuario logueado se borre a sí mismo 
-    if (Auth::user()==$user){
-        abort(403,'No puees borrar tu propio usuario');
+    if (Auth::id() === $user->id){
+        abort(403,'No puedes borrar tu propio usuario');
     }
         //Eliminar roles asociados a un usuario
         $user->roles()->detach();
