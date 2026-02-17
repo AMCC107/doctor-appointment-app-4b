@@ -48,7 +48,23 @@ class PatientController extends Controller
     {
         $bloodTypes = BloodType::all();
 
-        return view('admin.patients.edit', compact('patient', 'bloodTypes'));
+        $initialTab = 'datos_personales';
+        $errors = session()->get('errors');
+        if ($errors) {
+            $bag = $errors->getBag('default');
+            $antecedentesFields = ['allergies', 'chronic_conditions', 'surgical_history', 'family_history'];
+            $infoFields = ['blood_type_id', 'observations'];
+            $contactoFields = ['emergency_contact_name', 'emergency_contact_phone', 'emergency_contact_relationship'];
+            if ($bag->hasAny($antecedentesFields)) {
+                $initialTab = 'antecedentes';
+            } elseif ($bag->hasAny($infoFields)) {
+                $initialTab = 'informacion_general';
+            } elseif ($bag->hasAny($contactoFields)) {
+                $initialTab = 'contacto_emergencia';
+            }
+        }
+
+        return view('admin.patients.edit', compact('patient', 'bloodTypes', 'initialTab'));
     }
 
     /**
@@ -63,9 +79,9 @@ class PatientController extends Controller
             'surgical_history' => 'nullable|string|min:3|max:255',
             'family_history' => 'nullable|string|min:3|max:255',
             'observations' => 'nullable|string|min:3|max:255',
-            'emergency_contact_name' => 'nullable|string|min:3|max:255',
+            'emergency_contact_name' => 'nullable|string|min:3|max:50',
             'emergency_contact_phone' => ['nullable', 'string', 'min:10', 'max:12'],
-            'emergency_contact_relationship' => 'nullable|string|min:3|max:255',
+            'emergency_contact_relationship' => 'nullable|string|min:3|max:50',
         ]);
 
         $patient->update($data);
