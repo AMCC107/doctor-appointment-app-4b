@@ -9,6 +9,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
+
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, HasProfilePhoto, Notifiable, TwoFactorAuthenticatable, HasRoles;
@@ -38,8 +39,13 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-    //Relación uno a uno
+
+    //Relación uno a uno con Paciente
     public function patient() {
         return $this->hasOne(Patient::class);
+    }
+
+    public function doctor() {
+        return $this->hasOne(Doctor::class);
     }
 }

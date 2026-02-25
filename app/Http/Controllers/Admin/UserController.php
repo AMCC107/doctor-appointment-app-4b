@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Doctor;
 use App\Models\Role;
+use App\Models\Specialty;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,7 +28,7 @@ class UserController extends Controller
     {
        $data=$request->validate([
         'name' => 'required|string|min:3|max:255',
-        'email' => 'required|string|email|unique:users,email',
+        //'email' => 'required|string|email|unique:users,email',//
         'password' => 'required|string|min:8|confirmed',
         'password_confirmation' => 'required|string|min:8|same:password',
         'id_number' => 'required|string|min:5|max:255|regex:/^[A-za-z0-9]+$/|unique:users',
@@ -38,7 +40,7 @@ class UserController extends Controller
        // Exclude non-table fields and hash password
        $user = User::create([
            'name' => $data['name'],
-           'email' => $data['email'],
+           //'email' => $data['email'],//
            'password' => bcrypt($data['password']),
            'id_number' => $data['id_number'],
            'phone' => $data['phone'],
@@ -46,8 +48,9 @@ class UserController extends Controller
        ]);
        $user->roles()->attach($data['role_id']);
 
-       // Si se crea un paciente, redirigir al formulario de edición del paciente
        $role = Role::find($data['role_id']);
+
+       // Si se crea un paciente, crear perfil y redirigir al formulario de edición
        if ($role && $role->name === 'Paciente') {
            $patient = $user->patient()->create([]);
            session()->flash('swal', 
@@ -57,6 +60,24 @@ class UserController extends Controller
             'text' => 'El usuario ha sido creado exitosamente',
            ]);
            return redirect()->route('admin.patients.edit', $patient)->with('success', 'Usuario creado correctamente');
+       }
+
+       // Si se crea un doctor, crear perfil y redirigir al formulario de edición
+       if ($role && $role->name === 'Doctor') {
+           $defaultSpecialtyId = Specialty::min('id');
+           if ($defaultSpecialtyId !== null) {
+               $doctor = Doctor::firstOrCreate(
+                   ['user_id' => $user->id],
+                   ['specialty_id' => $defaultSpecialtyId, 'medical_license' => null, 'bio' => null]
+               );
+               session()->flash('swal', 
+               [
+                   'icon' => 'success',
+                   'title' => 'Usuario creado correctamente',
+                   'text' => 'El usuario ha sido creado exitosamente',
+               ]);
+               return redirect()->route('admin.doctors.edit', $doctor)->with('success', 'Usuario creado correctamente');
+           }
        }
 
        session()->flash('swal', 
@@ -78,7 +99,7 @@ class UserController extends Controller
     {
         $validationRules = [
             'name' => 'required|string|min:3|max:255',
-            'email' => 'required|string|email|unique:users,email,' . $user->id,
+            //'email' => 'required|string|email|unique:users,email,' . $user->id,//
             'id_number' => 'required|string|min:5|max:255|regex:/^[A-za-z0-9]+$/|unique:users,id_number,' . $user->id,
             'phone' => 'required|digits_between:7,15',
             'address' => 'required|string|min:3|max:255',
@@ -107,6 +128,18 @@ class UserController extends Controller
             $user->save();
            }
            $user->roles()->sync($data['role_id']);
+
+           // Si el usuario tiene ahora el rol Doctor, asegurar que tenga perfil en doctors
+           $role = Role::find($data['role_id']);
+           if ($role && $role->name === 'Doctor') {
+               $defaultSpecialtyId = Specialty::min('id');
+               if ($defaultSpecialtyId !== null) {
+                   Doctor::firstOrCreate(
+                       ['user_id' => $user->id],
+                       ['specialty_id' => $defaultSpecialtyId, 'medical_license' => null, 'bio' => null]
+                   );
+               }
+           }
 
            session()->flash('swal', 
            [
