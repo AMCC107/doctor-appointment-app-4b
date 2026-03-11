@@ -51,5 +51,6 @@
                 Swal.fire(@json(session('swal')));
             </script>
         @endif
+        @stack('scripts')
     </body>
 </html>

@@ -44,6 +44,9 @@
                                 {{ $doctor->medical_license ?? 'N/A' }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <a href="{{ route('admin.doctors.schedules', $doctor) }}" class="inline-flex items-center justify-center p-1.5 text-white bg-green-500 rounded hover:bg-green-600 mr-2 focus:outline-none focus:ring-2 focus:ring-green-400" title="Horarios">
+                                    <i class="fa-regular fa-clock"></i>
+                                </a>
                                 <x-wire-button href="{{ route('admin.doctors.edit', $doctor) }}" blue xs>
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </x-wire-button>

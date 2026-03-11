@@ -32,7 +32,19 @@ $links = [
         'icon' => 'fa-solid fa-user-doctor',
         'href' => route('admin.doctors.index'),
         'active' => request()->routeIs('admin.doctors.*'),
-],
+    ],
+    [
+        'name' => 'Citas médicas',
+        'icon' => 'fa-regular fa-calendar-check',
+        'href' => route('admin.appointments.index'),
+        'active' => request()->routeIs('admin.appointments.*'),
+    ],
+    [
+        'name' => 'Calendario',
+        'icon' => 'fa-regular fa-calendar-days',
+        'href' => route('doctor_availabilities.edit'),
+        'active' => request()->routeIs('doctor_availabilities.*'),
+    ],
 ];
 @endphp
 
