@@ -8,7 +8,6 @@ use Illuminate\Validation\Rule;
 use App\Models\Appointment;
 use App\Models\Patient;
 use App\Models\Doctor;
-use App\Services\AppointmentWhatsAppNotifier;
 
 class AppointmentController extends Controller
 {
@@ -41,54 +40,23 @@ class AppointmentController extends Controller
             'patient_id' => 'required|exists:patients,id',
             'doctor_id' => 'required|exists:doctors,id',
             'date' => 'required|date|after_or_equal:today',
-            'start_hour' => 'required|integer|between:0,23',
-            'start_minute' => 'required|integer|in:0,15,30,45',
-            'end_hour' => 'required|integer|between:0,23',
-            'end_minute' => 'required|integer|in:0,15,30,45',
-            'reason' => 'nullable|string',
+            'start_time' => 'required|date_format:H:i',
+            'end_time' => 'required|date_format:H:i|after:start_time',
+            'reason' => 'nullable|string'
         ]);
 
-        $startTime = sprintf('%02d:%02d', (int) $request->start_hour, (int) $request->start_minute);
-        $endTime = sprintf('%02d:%02d', (int) $request->end_hour, (int) $request->end_minute);
-        $startM = (int) $request->start_hour * 60 + (int) $request->start_minute;
-        $endM = (int) $request->end_hour * 60 + (int) $request->end_minute;
-        if ($endM <= $startM) {
-            return back()->withErrors(['end_time' => 'La hora fin debe ser posterior a la hora de inicio.'])->withInput();
-        }
-
-        $appointment = Appointment::create([
+        Appointment::create([
             'patient_id' => $request->patient_id,
             'doctor_id' => $request->doctor_id,
             'date' => $request->date,
-            'start_time' => $startTime,
-            'end_time' => $endTime,
+            'start_time' => $request->start_time,
+            'end_time' => $request->end_time,
             'duration' => 15,
             'reason' => $request->reason,
             'status' => 1,
         ]);
 
-        $fresh = $appointment->fresh(['patient.user', 'doctor.user']);
-        $whatsapp = $fresh instanceof Appointment
-            ? app(AppointmentWhatsAppNotifier::class)->notifyAppointmentCreated($fresh)
-            : ['sent' => false, 'reason' => 'exception', 'detail' => 'No se pudo recargar la cita tras guardarla.'];
-
-        $redirect = redirect()
-            ->route('admin.appointments.index')
-            ->with('success', 'Cita programada con éxito.');
-
-        if (! ($whatsapp['sent'] ?? false)) {
-            $warning = match ($whatsapp['reason'] ?? '') {
-                'no_phone' => 'WhatsApp no enviado: el paciente no tiene teléfono en su usuario ni en contacto de emergencia. Complétalo y vuelve a intentar o envía manualmente.',
-                'twilio_failed' => 'La cita se guardó, pero rechazó WhatsApp: '.($whatsapp['detail'] ?? 'sin detalle').'.',
-                'exception' => 'La cita se guardó, pero falló el envío de WhatsApp: '.($whatsapp['detail'] ?? 'error desconocido').'. Revisa laravel.log.',
-                default => 'No se pudo verificar el envío de WhatsApp. Si no llegó el mensaje, revisa el teléfono del paciente y laravel.log.',
-            };
-            $redirect->with('warning', $warning);
-        } else {
-            $redirect->with('info', 'Se envió la confirmación por WhatsApp al paciente.');
-        }
-
-        return $redirect;
+        return redirect()->route('admin.appointments.index')->with('success', 'Cita programada con éxito.');
     }
 
     public function edit(Appointment $appointment)
@@ -109,27 +77,17 @@ class AppointmentController extends Controller
                 'date',
                 Rule::when($request->date !== $appointment->date->format('Y-m-d'), 'after_or_equal:today'),
             ],
-            'start_hour' => 'required|integer|between:0,23',
-            'start_minute' => 'required|integer|in:0,15,30,45',
-            'end_hour' => 'required|integer|between:0,23',
-            'end_minute' => 'required|integer|in:0,15,30,45',
+            'start_time' => 'required|date_format:H:i',
+            'end_time' => 'required|date_format:H:i|after:start_time',
             'reason' => 'nullable|string',
         ]);
-
-        $startTime = sprintf('%02d:%02d', (int) $request->start_hour, (int) $request->start_minute);
-        $endTime = sprintf('%02d:%02d', (int) $request->end_hour, (int) $request->end_minute);
-        $startM = (int) $request->start_hour * 60 + (int) $request->start_minute;
-        $endM = (int) $request->end_hour * 60 + (int) $request->end_minute;
-        if ($endM <= $startM) {
-            return back()->withErrors(['end_time' => 'La hora fin debe ser posterior a la hora de inicio.'])->withInput();
-        }
 
         $appointment->update([
             'patient_id' => $request->patient_id,
             'doctor_id' => $request->doctor_id,
             'date' => $request->date,
-            'start_time' => $startTime,
-            'end_time' => $endTime,
+            'start_time' => $request->start_time,
+            'end_time' => $request->end_time,
             'reason' => $request->reason,
         ]);
 

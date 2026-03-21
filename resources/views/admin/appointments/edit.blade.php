@@ -43,34 +43,13 @@
                     <label for="date" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Fecha</label>
                     <input type="date" id="date" name="date" value="{{ old('date', $appointment->date->format('Y-m-d')) }}" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
                 </div>
-                @php
-                    $timeInputClassEdit = 'bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white';
-                    $st = \Carbon\Carbon::parse($appointment->start_time);
-                    $et = \Carbon\Carbon::parse($appointment->end_time);
-                    $startHourEdit = old('start_hour', (int) $st->format('H'));
-                    $startMinEdit = old('start_minute', (int) $st->format('i'));
-                    $endHourEdit = old('end_hour', (int) $et->format('H'));
-                    $endMinEdit = old('end_minute', (int) $et->format('i'));
-                @endphp
                 <div>
-                    <span class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Hora de Inicio</span>
-                    <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Solo intervalos de 15 min</p>
-                    @include('admin.appointments.partials.time-quarter-selects', [
-                        'prefix' => 'start',
-                        'hourDefault' => $startHourEdit,
-                        'minuteDefault' => $startMinEdit,
-                        'inputClass' => $timeInputClassEdit,
-                    ])
+                    <label for="start_time" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Hora de Inicio</label>
+                    <input type="time" id="start_time" name="start_time" value="{{ old('start_time', \Carbon\Carbon::parse($appointment->start_time)->format('H:i')) }}" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
                 </div>
                 <div>
-                    <span class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Hora Final</span>
-                    <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Solo intervalos de 15 min</p>
-                    @include('admin.appointments.partials.time-quarter-selects', [
-                        'prefix' => 'end',
-                        'hourDefault' => $endHourEdit,
-                        'minuteDefault' => $endMinEdit,
-                        'inputClass' => $timeInputClassEdit,
-                    ])
+                    <label for="end_time" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Hora Final</label>
+                    <input type="time" id="end_time" name="end_time" value="{{ old('end_time', \Carbon\Carbon::parse($appointment->end_time)->format('H:i')) }}" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
                 </div>
             </div>
             <div class="mt-6">
