@@ -36,3 +36,4 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::post('doctor-availabilities/update', [App\Http\Controllers\DoctorAvailabilityController::class, 'update'])->name('doctor_availabilities.update');
     Route::post('doctor-availabilities/slots', [App\Http\Controllers\DoctorAvailabilityController::class, 'getAvailableSlots'])->name('doctor_availabilities.slots');
 });
+// Trigger para la palomita verde.
