@@ -35,14 +35,4 @@ return [
         ],
     ],
 
-    'whatsapp' => [
-        'base_url' => env('WHATSAPP_BASE_URL', 'https://graph.facebook.com'),
-        'phone_number_id' => env('WHATSAPP_PHONE_NUMBER_ID'),
-        'access_token' => env('WHATSAPP_ACCESS_TOKEN'),
-        'api_version' => env('WHATSAPP_API_VERSION', 'v22.0'),
-        'verify_ssl' => env('WHATSAPP_SSL_VERIFY', true),
-        'queue' => env('WHATSAPP_QUEUE', 'default'),
-        'confirmation_use_template' => env('WHATSAPP_CONFIRMATION_USE_TEMPLATE', false),
-    ],
-
 ];
