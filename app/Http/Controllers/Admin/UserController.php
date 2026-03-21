@@ -99,55 +99,53 @@ class UserController extends Controller
     {
         $validationRules = [
             'name' => 'required|string|min:3|max:255',
-            //'email' => 'required|string|email|unique:users,email,' . $user->id,//
+            'email' => 'sometimes|nullable|string|email|unique:users,email,' . $user->id,
             'id_number' => 'required|string|min:5|max:255|regex:/^[A-za-z0-9]+$/|unique:users,id_number,' . $user->id,
             'phone' => 'required|digits_between:7,15',
             'address' => 'required|string|min:3|max:255',
             'role_id' => 'required|exists:roles,id',
         ];
 
-        // Validar contraseña solo si está presente
         if ($request->filled('password')) {
             $validationRules['password'] = 'required|string|min:8|confirmed';
             $validationRules['password_confirmation'] = 'required|string|min:8|same:password';
         }
 
         $data = $request->validate($validationRules);
-    
-           // Exclude role_id from user update
-           $user->update([
-               'name' => $data['name'],
-               'email' => $data['email'],
-               'id_number' => $data['id_number'],
-               'phone' => $data['phone'],
-               'address' => $data['address'],
-           ]);
-           //Si el usuario quiere editar su contraseña, que lo guarde
-           if ($request->filled('password')) {
-            $user->password = bcrypt($data['password']);
+
+        $user->update([
+            'name' => $data['name'] ?? $user->name,
+            'email' => $request->input('email', $user->email),
+            'id_number' => $data['id_number'] ?? $user->id_number,
+            'phone' => $data['phone'] ?? $user->phone,
+            'address' => $data['address'] ?? $user->address,
+        ]);
+
+        if ($request->filled('password')) {
+            $user->password = bcrypt($data['password'] ?? $request->input('password'));
             $user->save();
-           }
-           $user->roles()->sync($data['role_id']);
+        }
 
-           // Si el usuario tiene ahora el rol Doctor, asegurar que tenga perfil en doctors
-           $role = Role::find($data['role_id']);
-           if ($role && $role->name === 'Doctor') {
-               $defaultSpecialtyId = Specialty::min('id');
-               if ($defaultSpecialtyId !== null) {
-                   Doctor::firstOrCreate(
-                       ['user_id' => $user->id],
-                       ['specialty_id' => $defaultSpecialtyId, 'medical_license' => null, 'bio' => null]
-                   );
-               }
-           }
+        $user->roles()->sync($data['role_id']);
 
-           session()->flash('swal', 
-           [
+        $role = Role::find($data['role_id']);
+        if ($role && $role->name === 'Doctor') {
+            $defaultSpecialtyId = Specialty::min('id');
+            if ($defaultSpecialtyId !== null) {
+                Doctor::firstOrCreate(
+                    ['user_id' => $user->id],
+                    ['specialty_id' => $defaultSpecialtyId, 'medical_license' => null, 'bio' => null]
+                );
+            }
+        }
+
+        session()->flash('swal', [
             'icon' => 'success',
             'title' => 'Usuario actualizado correctamente',
             'text' => 'El usuario ha sido actualizado exitosamente',
-           ]);
-           return redirect()->route('admin.users.edit', $user->id)->with('success', 'Usuario actualizado correctamente');
+        ]);
+
+        return redirect()->route('admin.users.edit', $user->id)->with('success', 'Usuario actualizado correctamente');
     }
 
     public function destroy(User $user)
