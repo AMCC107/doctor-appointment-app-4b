@@ -21,7 +21,7 @@ Route::middleware([
         return view('admin.dashboard', ['title' => 'Dashboard']); // Placeholder title assuming admin dashboard exists
     })->name('dashboard');
 
-    // Módulo de Citas Manuales (Admin)
+    // Módulo de Citas Manuales (Admin)nuevo de nuevo
     Route::resource('appointments', AdminAppointmentController::class)->only(['index', 'create', 'store', 'edit', 'update']);
     Route::get('appointments/{appointment}/consultation', [AdminAppointmentController::class, 'consultation'])->name('appointments.consultation');
 
@@ -36,3 +36,4 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::post('doctor-availabilities/update', [App\Http\Controllers\DoctorAvailabilityController::class, 'update'])->name('doctor_availabilities.update');
     Route::post('doctor-availabilities/slots', [App\Http\Controllers\DoctorAvailabilityController::class, 'getAvailableSlots'])->name('doctor_availabilities.slots');
 });
+// Trigger para la palomita verde.
