@@ -21,7 +21,7 @@ Route::middleware([
         return view('admin.dashboard', ['title' => 'Dashboard']); // Placeholder title assuming admin dashboard exists
     })->name('dashboard');
 
-    // Módulo de Citas Manuales (Admin)
+    // Módulo de Citas Manuales (Admin)nuevo de nuevo
     Route::resource('appointments', AdminAppointmentController::class)->only(['index', 'create', 'store', 'edit', 'update']);
     Route::get('appointments/{appointment}/consultation', [AdminAppointmentController::class, 'consultation'])->name('appointments.consultation');
 
