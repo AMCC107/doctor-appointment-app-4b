@@ -48,14 +48,47 @@
                         <input type="date" id="date" name="date" value="{{ old('date') }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
                     </div>
 
+                    @php
+                        $timeInputClass = 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white';
+                        $startHour = old('start_hour');
+                        $startMin = old('start_minute');
+                        if ($startHour === null && old('start_time')) {
+                            $p = explode(':', old('start_time'));
+                            $startHour = (int) ($p[0] ?? 9);
+                            $startMin = (int) ($p[1] ?? 0);
+                        }
+                        $startHour = (int) ($startHour ?? 9);
+                        $startMin = (int) ($startMin ?? 0);
+                        $endHour = old('end_hour');
+                        $endMin = old('end_minute');
+                        if ($endHour === null && old('end_time')) {
+                            $p = explode(':', old('end_time'));
+                            $endHour = (int) ($p[0] ?? 9);
+                            $endMin = (int) ($p[1] ?? 15);
+                        }
+                        $endHour = (int) ($endHour ?? 9);
+                        $endMin = (int) ($endMin ?? 15);
+                    @endphp
                     <div class="grid grid-cols-2 gap-2">
                         <div>
-                            <label for="start_time" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Hora inicio</label>
-                            <input type="time" id="start_time" name="start_time" value="{{ old('start_time') }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                            <span class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Hora inicio</span>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Solo intervalos de 15 min</p>
+                            @include('admin.appointments.partials.time-quarter-selects', [
+                                'prefix' => 'start',
+                                'hourDefault' => $startHour,
+                                'minuteDefault' => $startMin,
+                                'inputClass' => $timeInputClass,
+                            ])
                         </div>
                         <div>
-                            <label for="end_time" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Hora fin</label>
-                            <input type="time" id="end_time" name="end_time" value="{{ old('end_time') }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                            <span class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Hora fin</span>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Solo intervalos de 15 min</p>
+                            @include('admin.appointments.partials.time-quarter-selects', [
+                                'prefix' => 'end',
+                                'hourDefault' => $endHour,
+                                'minuteDefault' => $endMin,
+                                'inputClass' => $timeInputClass,
+                            ])
                         </div>
                     </div>
 
@@ -72,6 +105,9 @@
                                 <option value="{{ $patient->id }}" {{ old('patient_id') == $patient->id ? 'selected' : '' }}>{{ $patient->user->name }}</option>
                             @endforeach
                         </select>
+                        <p class="text-xs text-amber-800 dark:text-amber-200 mt-2 rounded bg-amber-50 dark:bg-amber-900/30 p-2">
+                            <strong>WhatsApp:</strong> se usa el teléfono del <em>usuario</em> del paciente; si está vacío, el de <em>contacto de emergencia</em>. Sin ninguno de los dos, no se envía mensaje.
+                        </p>
                     </div>
 
                     <div>

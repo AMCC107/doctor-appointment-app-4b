@@ -9,6 +9,18 @@
         </div>
     @endif
 
+    @if(session('info'))
+        <div class="p-4 mb-4 text-sm text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400" role="alert">
+            {{ session('info') }}
+        </div>
+    @endif
+
+    @if(session('warning'))
+        <div class="p-4 mb-4 text-sm text-amber-900 rounded-lg bg-amber-50 dark:bg-gray-800 dark:text-amber-200" role="alert">
+            <span class="font-medium">Aviso:</span> {{ session('warning') }}
+        </div>
+    @endif
+
     <div class="mb-4 flex flex-wrap items-center justify-between gap-4">
         <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Citas</h1>
         <a href="{{ route('admin.appointments.create') }}" class="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
