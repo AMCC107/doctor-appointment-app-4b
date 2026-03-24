@@ -43,27 +43,17 @@ class AppointmentController extends Controller
             'patient_id' => 'required|exists:patients,id',
             'doctor_id' => 'required|exists:doctors,id',
             'date' => 'required|date|after_or_equal:today',
-            'start_hour' => 'required|integer|between:0,23',
-            'start_minute' => 'required|integer|in:0,15,30,45',
-            'end_hour' => 'required|integer|between:0,23',
-            'end_minute' => 'required|integer|in:0,15,30,45',
-            'reason' => 'nullable|string',
+            'start_time' => 'required|date_format:H:i',
+            'end_time' => 'required|date_format:H:i|after:start_time',
+            'reason' => 'nullable|string'
         ]);
 
-        $startTime = sprintf('%02d:%02d', (int) $request->start_hour, (int) $request->start_minute);
-        $endTime = sprintf('%02d:%02d', (int) $request->end_hour, (int) $request->end_minute);
-        $startM = (int) $request->start_hour * 60 + (int) $request->start_minute;
-        $endM = (int) $request->end_hour * 60 + (int) $request->end_minute;
-        if ($endM <= $startM) {
-            return back()->withErrors(['end_time' => 'La hora fin debe ser posterior a la hora de inicio.'])->withInput();
-        }
-
-        $appointment = Appointment::create([
+        Appointment::create([
             'patient_id' => $request->patient_id,
             'doctor_id' => $request->doctor_id,
             'date' => $request->date,
-            'start_time' => $startTime,
-            'end_time' => $endTime,
+            'start_time' => $request->start_time,
+            'end_time' => $request->end_time,
             'duration' => 15,
             'reason' => $request->reason,
             'status' => 1,
@@ -122,27 +112,17 @@ class AppointmentController extends Controller
                 'date',
                 Rule::when($request->date !== $appointment->date->format('Y-m-d'), 'after_or_equal:today'),
             ],
-            'start_hour' => 'required|integer|between:0,23',
-            'start_minute' => 'required|integer|in:0,15,30,45',
-            'end_hour' => 'required|integer|between:0,23',
-            'end_minute' => 'required|integer|in:0,15,30,45',
+            'start_time' => 'required|date_format:H:i',
+            'end_time' => 'required|date_format:H:i|after:start_time',
             'reason' => 'nullable|string',
         ]);
-
-        $startTime = sprintf('%02d:%02d', (int) $request->start_hour, (int) $request->start_minute);
-        $endTime = sprintf('%02d:%02d', (int) $request->end_hour, (int) $request->end_minute);
-        $startM = (int) $request->start_hour * 60 + (int) $request->start_minute;
-        $endM = (int) $request->end_hour * 60 + (int) $request->end_minute;
-        if ($endM <= $startM) {
-            return back()->withErrors(['end_time' => 'La hora fin debe ser posterior a la hora de inicio.'])->withInput();
-        }
 
         $appointment->update([
             'patient_id' => $request->patient_id,
             'doctor_id' => $request->doctor_id,
             'date' => $request->date,
-            'start_time' => $startTime,
-            'end_time' => $endTime,
+            'start_time' => $request->start_time,
+            'end_time' => $request->end_time,
             'reason' => $request->reason,
         ]);
 

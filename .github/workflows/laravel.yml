@@ -1,0 +1,27 @@
+name: Laravel CI
+
+on:
+  push:
+    branches: [ "main", "feature/whatsapp-notifications" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2' # Versión estándar y estable
+        extensions: mbstring, dom, curl, libxml, mysql
+        coverage: none
+
+    - name: Install Dependencies
+      run: composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --ignore-platform-reqs
+
+    - name: Check PHP Syntax
+      run: php -l $(find . -name "*.php" -not -path "./vendor/*")
