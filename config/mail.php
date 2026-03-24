@@ -115,4 +115,6 @@ return [
         'name' => env('MAIL_FROM_NAME', 'Example'),
     ],
 
+    'daily_report_admin' => env('MAIL_DAILY_REPORT_ADMIN', 'admin@clinica.com'),
+
 ];

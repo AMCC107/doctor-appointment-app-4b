@@ -9,6 +9,8 @@ use App\Models\Appointment;
 use App\Models\Patient;
 use App\Models\Doctor;
 use App\Services\AppointmentWhatsAppNotifier;
+use App\Mail\AppointmentCreatedMail;
+use Illuminate\Support\Facades\Mail;
 
 class AppointmentController extends Controller
 {
@@ -86,6 +88,17 @@ class AppointmentController extends Controller
             $redirect->with('warning', $warning);
         } else {
             $redirect->with('info', 'Se envió la confirmación por WhatsApp al paciente.');
+        }
+
+        if ($fresh instanceof Appointment) {
+            $patientEmail = $fresh->patient->user?->email;
+            $doctorEmail = $fresh->doctor->user?->email;
+            if ($patientEmail) {
+                Mail::to($patientEmail)->send(new AppointmentCreatedMail($fresh));
+            }
+            if ($doctorEmail) {
+                Mail::to($doctorEmail)->send(new AppointmentCreatedMail($fresh, forDoctor: true));
+            }
         }
 
         return $redirect;
